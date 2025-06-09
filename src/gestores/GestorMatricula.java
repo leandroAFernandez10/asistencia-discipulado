@@ -27,8 +27,14 @@ public class GestorMatricula {
             System.out.println("4. Listar matrículas");
             System.out.println("5. Volver al menú principal");
             System.out.print("Opción: ");
-            opcion = Integer.parseInt(scanner.nextLine());
 
+            try {
+                opcion = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Ingrese un número.");
+                opcion = -1; // Evita ejecutar ninguna acción
+                continue;
+            }
             switch (opcion) {
                 case 1 -> registrarMatricula();
                 case 2 -> editarMatricula();

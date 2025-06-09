@@ -39,7 +39,14 @@ public class MenuPrincipal {
             System.out.println("7. Gestor de Matrículas");
             System.out.println("8. Salir");
             System.out.print("Seleccione una opción: ");
-            opcion = Integer.parseInt(scanner.nextLine());
+
+            try {
+                opcion = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Ingrese un número.");
+                opcion = -1; // Evita ejecutar ninguna acción
+                continue;
+            }
 
             switch (opcion) {
                 case 1 -> gestorDisciplina.menuDisciplinas();
