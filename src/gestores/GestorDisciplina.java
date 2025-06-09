@@ -1,4 +1,7 @@
+package gestores;
+
 import java.util.*;
+import entidades.Disciplina;
 
 public class GestorDisciplina {
     private List<Disciplina> disciplinas = new ArrayList<>();

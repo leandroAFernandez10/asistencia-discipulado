@@ -1,3 +1,5 @@
+package entidades;
+
 public class Discipulo {
     private int id;
     private String nombre;
@@ -23,5 +25,13 @@ public class Discipulo {
 
     public String getApellido() {
         return apellido;
+    }
+
+    public void setNombre(String nextLine) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setApellido(String nextLine) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

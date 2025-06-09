@@ -1,3 +1,8 @@
+package gestores;
+
+import entidades.Asistencia;
+import entidades.Clase;
+import entidades.Discipulo;
 import java.util.*;
 
 public class GestorAsistencia {

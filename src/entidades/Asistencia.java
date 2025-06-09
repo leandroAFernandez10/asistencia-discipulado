@@ -1,3 +1,6 @@
+package entidades;
+
+
 public class Asistencia {
     private Clase clase;
     private Discipulo discipulo;

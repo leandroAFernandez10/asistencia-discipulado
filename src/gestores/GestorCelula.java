@@ -1,5 +1,8 @@
-import java.util.*;
+package gestores;
 
+import java.util.*;
+import entidades.Celula;
+        
 public class GestorCelula {
     private List<Celula> celulas = new ArrayList<>();
     private int contadorId = 1;

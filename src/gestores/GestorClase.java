@@ -1,4 +1,7 @@
+package gestores;
+
 import java.util.*;
+import entidades.Clase;
 
 public class GestorClase {
     private List<Clase> clases = new ArrayList<>();

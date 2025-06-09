@@ -1,4 +1,9 @@
+package gestores;
+
 import java.util.*;
+import entidades.Matricula;
+import entidades.Discipulo;
+import entidades.Discipulado;
 
 public class GestorMatricula {
     private List<Matricula> matriculas = new ArrayList<>();
