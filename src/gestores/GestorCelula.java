@@ -2,6 +2,7 @@ package gestores;
 
 import java.util.*;
 import entidades.Celula;
+import enumeracion.EstadoCelula;
         
 public class GestorCelula {
     private List<Celula> celulas = new ArrayList<>();
@@ -44,11 +45,19 @@ public class GestorCelula {
         System.out.print("Característica especial: ");
         String caracteristica = scanner.nextLine();
         System.out.print("Estado (Activa/Inactiva): ");
-        String estado = scanner.nextLine();
+        String estadoTexto = scanner.nextLine();
 
-        Celula nueva = new Celula(contadorId++, localidad, caracteristica, estado);
-        celulas.add(nueva);
-        System.out.println("Célula registrada.");
+
+        try {
+            EstadoCelula estado = EstadoCelula.desdeTexto(estadoTexto);
+
+            Celula nueva = new Celula(contadorId++, localidad, caracteristica, estado);
+            celulas.add(nueva);
+            System.out.println("Célula registrada.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+            // Opcional: podrías repetir la pregunta o manejar el error de otra forma
+        }
     }
 
     public void editarCelula() {
@@ -63,8 +72,14 @@ public class GestorCelula {
             System.out.print("Nueva característica especial: ");
             c.setCaracteristicaEspecial(scanner.nextLine());
             System.out.print("Nuevo estado (Activa/Inactiva): ");
-            c.setEstado(scanner.nextLine());
-            System.out.println("Célula actualizada.");
+            try {
+                String entradaEstado = scanner.nextLine();
+                EstadoCelula nuevoEstado = EstadoCelula.desdeTexto(entradaEstado);
+                c.setEstado(nuevoEstado);
+                System.out.println("Célula actualizada.");
+            } catch (IllegalArgumentException e) {
+                System.out.println("Estado inválido. No se actualizó el estado.");
+            }
         } else {
             System.out.println("Célula no encontrada.");
         }
@@ -92,7 +107,7 @@ public class GestorCelula {
             for (Celula c : celulas) {
                 System.out.println("ID: " + c.getId() + ", Localidad: " + c.getLocalidad()
                     + ", Característica: " + c.getCaracteristicaEspecial()
-                    + ", Estado: " + c.getEstado());
+                    + ", Estado: " + c.getEstadoTexto());
             }
         }
     }

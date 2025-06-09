@@ -1,12 +1,14 @@
 package entidades;
 
+import enumeracion.EstadoCelula;  
+
 public class Celula {
     private int id;
     private String localidad;
     private String caracteristicaEspecial;
-    private String estado; // Ejemplo: "Activa" o "Inactiva"
+    private EstadoCelula estado; //"Activa" o "Inactiva"
 
-    public Celula(int id, String localidad, String caracteristicaEspecial, String estado) {
+    public Celula(int id, String localidad, String caracteristicaEspecial, EstadoCelula estado) {
         this.id = id;
         this.localidad = localidad;
         this.caracteristicaEspecial = caracteristicaEspecial;
@@ -26,8 +28,8 @@ public class Celula {
         return caracteristicaEspecial;
     }
 
-    public String getEstado() {
-        return estado;
+    public String getEstadoTexto() {
+        return estado.toString();
     }
 
     // Setters
@@ -39,7 +41,7 @@ public class Celula {
         this.caracteristicaEspecial = caracteristicaEspecial;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoCelula estado) {
         this.estado = estado;
     }
 
