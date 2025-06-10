@@ -1,17 +1,18 @@
 package entidades;
 
+import entidades.Disciplina;
 import enumeracion.EstadoCelula;  
 
 public class Celula {
     private int id;
     private String localidad;
-    private String caracteristicaEspecial;
+    private Disciplina disciplina;
     private EstadoCelula estado; //"Activa" o "Inactiva"
 
-    public Celula(int id, String localidad, String caracteristicaEspecial, EstadoCelula estado) {
+    public Celula(int id, String localidad, Disciplina disciplina, EstadoCelula estado) {
         this.id = id;
         this.localidad = localidad;
-        this.caracteristicaEspecial = caracteristicaEspecial;
+        this.disciplina = disciplina;
         this.estado = estado;
     }
 
@@ -24,8 +25,8 @@ public class Celula {
         return localidad;
     }
 
-    public String getCaracteristicaEspecial() {
-        return caracteristicaEspecial;
+    public Disciplina getDisciplina() {
+        return disciplina;
     }
 
     public String getEstadoTexto() {
@@ -37,8 +38,8 @@ public class Celula {
         this.localidad = localidad;
     }
 
-    public void setCaracteristicaEspecial(String caracteristicaEspecial) {
-        this.caracteristicaEspecial = caracteristicaEspecial;
+    public void setDisciplina(Disciplina disciplina) {
+        this.disciplina = disciplina;
     }
 
     public void setEstado(EstadoCelula estado) {
@@ -48,7 +49,7 @@ public class Celula {
     @Override
     public String toString() {
         return "Celula [id=" + id + ", localidad=" + localidad +
-               ", característica=" + caracteristicaEspecial +
+               ", característica=" + disciplina +
                ", estado=" + estado + "]";
     }
 }
