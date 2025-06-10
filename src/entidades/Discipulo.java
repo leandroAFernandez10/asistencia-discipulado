@@ -1,14 +1,18 @@
 package entidades;
 
+import enumeracion.Genero;
+
 public class Discipulo {
     private int id;
     private String nombre;
     private String apellido;
-
-    public Discipulo(int id, String nombre, String apellido) {
+    private Genero genero; //Masculino o Femenino
+    
+    public Discipulo(int id, String nombre, String apellido, Genero genero) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
+        this.genero = genero;
     }
 
     public int getId() {
@@ -26,6 +30,10 @@ public class Discipulo {
     public String getApellido() {
         return apellido;
     }
+    
+    public String getGeneroTexto() {
+        return genero.toString();
+    }
 
     public void setNombre(String nextLine) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -33,5 +41,9 @@ public class Discipulo {
 
     public void setApellido(String nextLine) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
+    public void setGenero(Genero genero) {
+        this.genero = genero;
     }
 }

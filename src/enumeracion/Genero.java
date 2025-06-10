@@ -16,4 +16,15 @@ public enum Genero {
                 throw new IllegalArgumentException("Género inválido. Debe ser masculino o femenino.");
         }
     }
+    @Override
+    public String toString() {
+        switch (this) {
+            case MASCULINO:
+                return "Masculino";
+            case FEMENINO:
+                return "Femenino";
+            default:
+                return "";
+        }
+    }
 }

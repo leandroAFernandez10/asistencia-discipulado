@@ -56,7 +56,6 @@ public class GestorCelula {
             System.out.println("Célula registrada.");
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
-            // Opcional: podrías repetir la pregunta o manejar el error de otra forma
         }
     }
 
@@ -72,8 +71,8 @@ public class GestorCelula {
             System.out.print("Nueva característica especial: ");
             c.setCaracteristicaEspecial(scanner.nextLine());
             System.out.print("Nuevo estado (Activa/Inactiva): ");
+            String entradaEstado = scanner.nextLine();
             try {
-                String entradaEstado = scanner.nextLine();
                 EstadoCelula nuevoEstado = EstadoCelula.desdeTexto(entradaEstado);
                 c.setEstado(nuevoEstado);
                 System.out.println("Célula actualizada.");

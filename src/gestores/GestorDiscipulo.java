@@ -2,6 +2,7 @@ package gestores;
 
 import java.util.*;
 import entidades.Discipulo;
+import enumeracion.Genero;
 
 public class GestorDiscipulo {
     private List<Discipulo> discipulos = new ArrayList<>();
@@ -43,10 +44,18 @@ public class GestorDiscipulo {
         String nombre = scanner.nextLine();
         System.out.print("Apellido: ");
         String apellido = scanner.nextLine();
+        System.out.print("Estado (Femenino/Masculino): ");
+        String generoTexto = scanner.nextLine();
+        try {
+            Genero genero = Genero.desdeTexto(generoTexto);
 
-        Discipulo nuevo = new Discipulo(contadorId++, nombre, apellido);
-        discipulos.add(nuevo);
-        System.out.println("Discípulo registrado.");
+            Discipulo nuevo = new Discipulo(contadorId++, nombre, apellido, genero);
+            discipulos.add(nuevo);
+            System.out.println("Discípulo registrado.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
     }
 
     public void editarDiscipulo() {
@@ -60,6 +69,15 @@ public class GestorDiscipulo {
             d.setNombre(scanner.nextLine());
             System.out.print("Nuevo apellido: ");
             d.setApellido(scanner.nextLine());
+            System.out.print("Nuevo Género: ");
+            String entradaGenero = scanner.nextLine();
+            try {
+                Genero nuevoGenero = Genero.desdeTexto(entradaGenero);
+                d.setGenero(nuevoGenero);
+                System.out.println("Célula actualizada.");
+            } catch (IllegalArgumentException e) {
+                System.out.println("Estado inválido. No se actualizó el estado.");
+            }
             System.out.println("Discípulo actualizado.");
         } else {
             System.out.println("Discípulo no encontrado.");
@@ -86,7 +104,7 @@ public class GestorDiscipulo {
         } else {
             System.out.println("--- Lista de Discípulos ---");
             for (Discipulo d : discipulos) {
-                System.out.println("ID: " + d.getId() + ", Nombre: " + d.getNombreCompleto());
+                System.out.println("ID: " + d.getId() + ", Nombre: " + d.getNombreCompleto() + ", Género: " + d.getGeneroTexto());
             }
         }
     }
