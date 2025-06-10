@@ -21,7 +21,7 @@ public class MenuPrincipal {
     private GestorAsistencia gestorAsistencia = new GestorAsistencia(
         gestorClase.getClases(), gestorDiscipulo.getDiscipulos()
     );
-    private GestorCelula gestorCelula = new GestorCelula();
+    private GestorCelula gestorCelula = new GestorCelula(gestorDisciplina);
     private GestorMatricula gestorMatricula = new GestorMatricula(
         gestorDiscipulo.getDiscipulos(), gestorDiscipulado.getDiscipulados()
     );

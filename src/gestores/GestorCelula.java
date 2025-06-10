@@ -2,12 +2,18 @@ package gestores;
 
 import java.util.*;
 import entidades.Celula;
+import entidades.Disciplina;
 import enumeracion.EstadoCelula;
-        
+
 public class GestorCelula {
     private List<Celula> celulas = new ArrayList<>();
     private int contadorId = 1;
     private Scanner scanner = new Scanner(System.in);
+    private GestorDisciplina gestorDisciplina; // <-- Referencia agregada
+
+    public GestorCelula(GestorDisciplina gestorDisciplina) {
+        this.gestorDisciplina = gestorDisciplina;
+    }
 
     public void menuCelulas() {
         int opcion;
@@ -24,7 +30,7 @@ public class GestorCelula {
                 opcion = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Entrada inválida. Ingrese un número.");
-                opcion = -1; // Evita ejecutar ninguna acción
+                opcion = -1;
                 continue;
             }
 
@@ -42,16 +48,19 @@ public class GestorCelula {
     public void crearCelula() {
         System.out.print("Localidad: ");
         String localidad = scanner.nextLine();
-        System.out.print("Característica especial: ");
-        String caracteristica = scanner.nextLine();
+
+        Disciplina disciplinaSeleccionada = seleccionarDisciplina();
+        if (disciplinaSeleccionada == null) {
+            System.out.println("No se pudo seleccionar una disciplina. Cancelando operación.");
+            return;
+        }
+
         System.out.print("Estado (Activa/Inactiva): ");
         String estadoTexto = scanner.nextLine();
 
-
         try {
             EstadoCelula estado = EstadoCelula.desdeTexto(estadoTexto);
-
-            Celula nueva = new Celula(contadorId++, localidad, caracteristica, estado);
+            Celula nueva = new Celula(contadorId++, localidad, disciplinaSeleccionada, estado);
             celulas.add(nueva);
             System.out.println("Célula registrada.");
         } catch (IllegalArgumentException e) {
@@ -68,8 +77,14 @@ public class GestorCelula {
         if (c != null) {
             System.out.print("Nueva localidad: ");
             c.setLocalidad(scanner.nextLine());
-            System.out.print("Nueva característica especial: ");
-            c.setCaracteristicaEspecial(scanner.nextLine());
+
+            Disciplina nuevaDisciplina = seleccionarDisciplina();
+            if (nuevaDisciplina != null) {
+                c.setDisciplina(nuevaDisciplina);
+            } else {
+                System.out.println("No se seleccionó una nueva disciplina. Se mantiene la anterior.");
+            }
+
             System.out.print("Nuevo estado (Activa/Inactiva): ");
             String entradaEstado = scanner.nextLine();
             try {
@@ -81,6 +96,32 @@ public class GestorCelula {
             }
         } else {
             System.out.println("Célula no encontrada.");
+        }
+    }
+
+    private Disciplina seleccionarDisciplina() {
+        List<Disciplina> disponibles = gestorDisciplina.getDisciplinas();
+        if (disponibles.isEmpty()) {
+            System.out.println("No hay disciplinas disponibles. Cree una primero.");
+            return null;
+        }
+
+        System.out.println("--- Seleccione una disciplina ---");
+        for (Disciplina d : disponibles) {
+            System.out.println("ID: " + d.getId() + " - " + d.getNombre());
+        }
+        System.out.print("Ingrese el ID de la disciplina: ");
+        try {
+            int idDisciplina = Integer.parseInt(scanner.nextLine());
+            Disciplina seleccionada = gestorDisciplina.buscarPorId(idDisciplina);
+            if (seleccionada == null) {
+                System.out.println("ID inválido.");
+                return null;
+            }
+            return seleccionada;
+        } catch (NumberFormatException e) {
+            System.out.println("Entrada inválida.");
+            return null;
         }
     }
 
@@ -104,9 +145,10 @@ public class GestorCelula {
         } else {
             System.out.println("--- Lista de Células ---");
             for (Celula c : celulas) {
-                System.out.println("ID: " + c.getId() + ", Localidad: " + c.getLocalidad()
-                    + ", Característica: " + c.getCaracteristicaEspecial()
-                    + ", Estado: " + c.getEstadoTexto());
+                System.out.println("ID: " + c.getId() +
+                    ", Localidad: " + c.getLocalidad() +
+                    ", Disciplina: " + c.getDisciplina().getNombre() +
+                    ", Estado: " + c.getEstadoTexto());
             }
         }
     }
