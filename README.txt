@@ -1,1 +1,2 @@
-Usuario: admin --- Contraseña: 1234
+Usuario: admin
+Contraseña: 1234
