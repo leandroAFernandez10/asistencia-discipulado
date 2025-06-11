@@ -160,9 +160,49 @@ public class GestorAsistencia {
         }
     }
 
-    public void listarAsistenciasPorClase(){
-        
+    public void listarAsistenciasPorClase() {
+        Clase claseSeleccionada = seleccionarClase();
+        if (claseSeleccionada == null) {
+            return;
+        }
+
+        Discipulado discipulado = claseSeleccionada.getDiscipulado();
+        if (discipulado == null) {
+            System.out.println("La clase no está asociada a ningún discipulado.");
+            return;
+        }
+
+        // Obtener matrículas del discipulado
+        List<Matricula> matriculasDiscipulado = new ArrayList<>();
+        for (Matricula m : matriculasDisponibles) {
+            if (m.getDiscipulado().equals(discipulado)) {
+                matriculasDiscipulado.add(m);
+            }
+        }
+
+        if (matriculasDiscipulado.isEmpty()) {
+            System.out.println("No hay discípulos matriculados en este discipulado.");
+            return;
+        }
+
+        // Verificar asistencia para cada discípulo matriculado
+        System.out.println("\n--- Planilla de Asistencia para la clase: " + claseSeleccionada.getTema() + " (" + claseSeleccionada.getFecha() + ") ---");
+        for (Matricula m : matriculasDiscipulado) {
+            Discipulo d = m.getDiscipulo();
+            boolean presente = false;
+
+            for (Asistencia a : asistencias) {
+                if (a.getClase().equals(claseSeleccionada) && a.getDiscipulo().equals(d)) {
+                    presente = true;
+                    break;
+                }
+            }
+
+            String estado = presente ? "PRESENTE" : "AUSENTE";
+            System.out.println(d.getNombreCompleto() + " - " + estado);
+        }
     }
+
     
     private Clase seleccionarClase() {
         if (clasesDisponibles.isEmpty()) {

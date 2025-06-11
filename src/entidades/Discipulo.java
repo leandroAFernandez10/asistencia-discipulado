@@ -35,12 +35,12 @@ public class Discipulo {
         return genero.toString();
     }
 
-    public void setNombre(String nextLine) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public void setApellido(String nextLine) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setApellido(String apellido) {
+        this.nombre = nombre;
     }
     
     public void setGenero(Genero genero) {

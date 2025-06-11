@@ -29,11 +29,10 @@ public class Discipulado {
         return disciplina;
     }
 
-    public void setNombre(String nextLine) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setNombre(String nombre) {
     }
 
-    public void setAnio(int parseInt) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setAnio(int anio) {
+        this.anio = anio;
     }
 }

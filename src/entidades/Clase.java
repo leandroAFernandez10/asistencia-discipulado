@@ -30,11 +30,11 @@ public class Clase {
         return discipulado;
     }
 
-    public void setTema(String nextLine) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setTema(String tema) {
+        this.tema = tema;
     }
 
-    public void setFecha(String nextLine) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
     }
 }
