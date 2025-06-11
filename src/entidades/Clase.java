@@ -3,8 +3,7 @@ package entidades;
 public class Clase {
     private int id;
     private String tema;
-    private String fecha; // puede mejorarse con LocalDate si se desea
-
+    private String fecha;
     private Discipulado discipulado;
 
     public Clase(int id, String tema, String fecha, Discipulado discipulado) {

@@ -8,6 +8,7 @@ import gestores.GestorDisciplina;
 import gestores.GestorDiscipulado;
 import gestores.GestorDiscipulo;
 import gestores.GestorMatricula;
+import servicios.DeterminarAsistencia;
 import java.util.Scanner;
 
 public class MenuPrincipal {
@@ -25,6 +26,11 @@ public class MenuPrincipal {
         gestorClase.getClases(), gestorDiscipulo.getDiscipulos(), gestorMatricula.getMatriculas()
     );
     private GestorCelula gestorCelula = new GestorCelula(gestorDisciplina);
+    private DeterminarAsistencia determinarAsistencia = new DeterminarAsistencia(
+        gestorDiscipulado.getDiscipulados(), gestorClase.getClases(), gestorMatricula.getMatriculas(), 
+        gestorDiscipulo.getDiscipulos(), gestorAsistencia.getAsistencias()
+    );
+    
 
 
     public void mostrarMenu() {
@@ -38,7 +44,8 @@ public class MenuPrincipal {
             System.out.println("5. Gestor de Matrículas");
             System.out.println("6. Gestor de Asistencias");
             System.out.println("7. Gestor de Células");
-            System.out.println("8. Salir");
+            System.out.println("8. Control de Porcentaje de Asistencias");
+            System.out.println("9. Salir");
             System.out.print("Seleccione una opción: ");
 
             try {
@@ -57,7 +64,8 @@ public class MenuPrincipal {
                 case 5 -> gestorMatricula.menuMatriculas();
                 case 6 -> gestorAsistencia.menuAsistencias();
                 case 7 -> gestorCelula.menuCelulas();
-                case 8 -> System.out.println("Saliendo del sistema...");
+                case 8 -> determinarAsistencia.listarPorcentajeAsistencia();
+                case 9 -> System.out.println("Saliendo del sistema...");
                 default -> System.out.println("Opción inválida. Intente de nuevo.");
             }
 
