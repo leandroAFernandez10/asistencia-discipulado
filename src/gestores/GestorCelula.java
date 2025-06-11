@@ -3,16 +3,19 @@ package gestores;
 import java.util.*;
 import entidades.Celula;
 import entidades.Disciplina;
+import entidades.Discipulo;
 import enumeracion.EstadoCelula;
 
 public class GestorCelula {
     private List<Celula> celulas = new ArrayList<>();
     private int contadorId = 1;
     private Scanner scanner = new Scanner(System.in);
-    private GestorDisciplina gestorDisciplina; // <-- Referencia agregada
+    private List<Disciplina> disciplinasDisponibles;
+    private List<Discipulo> discipulosDisponibles;
 
-    public GestorCelula(GestorDisciplina gestorDisciplina) {
-        this.gestorDisciplina = gestorDisciplina;
+    public GestorCelula(List<Disciplina> disciplinas, List<Discipulo> discipulos) {
+        this.disciplinasDisponibles = disciplinas;
+        this.discipulosDisponibles = discipulos;
     }
 
     public void menuCelulas() {
@@ -54,13 +57,27 @@ public class GestorCelula {
             System.out.println("No se pudo seleccionar una disciplina. Cancelando operación.");
             return;
         }
-
+        Discipulo anfitrionSeleccionado = seleccionarDiscipulo();
+        if (anfitrionSeleccionado == null) {
+            System.out.println("No se pudo seleccionar una disciplina. Cancelando operación.");
+            return;
+        }
+        Discipulo timonelSeleccionado = seleccionarDiscipulo();
+        if (timonelSeleccionado == null) {
+            System.out.println("No se pudo seleccionar una disciplina. Cancelando operación.");
+            return;
+        }
+        Discipulo colaboradorSeleccionado = seleccionarDiscipulo();
+        if (colaboradorSeleccionado == null) {
+            System.out.println("No se pudo seleccionar una disciplina. Cancelando operación.");
+            return;
+        }
         System.out.print("Estado (Activa/Inactiva): ");
         String estadoTexto = scanner.nextLine();
 
         try {
             EstadoCelula estado = EstadoCelula.desdeTexto(estadoTexto);
-            Celula nueva = new Celula(contadorId++, localidad, disciplinaSeleccionada, estado);
+            Celula nueva = new Celula(contadorId++, localidad, disciplinaSeleccionada, estado, anfitrionSeleccionado, timonelSeleccionado, colaboradorSeleccionado);
             celulas.add(nueva);
             System.out.println("Célula registrada.");
         } catch (IllegalArgumentException e) {
@@ -100,31 +117,43 @@ public class GestorCelula {
     }
 
     private Disciplina seleccionarDisciplina() {
-        List<Disciplina> disponibles = gestorDisciplina.getDisciplinas();
-        if (disponibles.isEmpty()) {
-            System.out.println("No hay disciplinas disponibles. Cree una primero.");
+        if (disciplinasDisponibles.isEmpty()) {
+            System.out.println("No hay disciplinas disponibles. Cargue una primero.");
             return null;
         }
 
-        System.out.println("--- Seleccione una disciplina ---");
-        for (Disciplina d : disponibles) {
+        System.out.println("--- Selecciona un disciplina ---");
+        for (Disciplina d : disciplinasDisponibles) {
             System.out.println("ID: " + d.getId() + " - " + d.getNombre());
         }
         System.out.print("Ingrese el ID de la disciplina: ");
-        try {
-            int idDisciplina = Integer.parseInt(scanner.nextLine());
-            Disciplina seleccionada = gestorDisciplina.buscarPorId(idDisciplina);
-            if (seleccionada == null) {
-                System.out.println("ID inválido.");
-                return null;
-            }
-            return seleccionada;
-        } catch (NumberFormatException e) {
-            System.out.println("Entrada inválida.");
-            return null;
+        int idDiscipulo = Integer.parseInt(scanner.nextLine());
+        for (Disciplina d : disciplinasDisponibles) {
+            if (d.getId() == idDiscipulo) return d;
         }
+        System.out.println("Disciplina no encontrada.");
+        return null;
     }
 
+    private Discipulo seleccionarDiscipulo() {
+        if (discipulosDisponibles.isEmpty()) {
+            System.out.println("No hay discipulos disponibles. Cargue uno primero.");
+            return null;
+        }
+
+        System.out.println("--- Seleccione un discipulo ---");
+        for (Discipulo d : discipulosDisponibles) {
+            System.out.println("ID: " + d.getId() + " - " + d.getNombre());
+        }
+        System.out.print("Ingrese el ID de la discipulo: ");
+        int idDiscipulo = Integer.parseInt(scanner.nextLine());
+        for (Discipulo c : discipulosDisponibles) {
+            if (c.getId() == idDiscipulo) return c;
+        }
+        System.out.println("Clase no encontrada.");
+        return null;
+    }
+    
     public void eliminarCelula() {
         listarCelulas();
         System.out.print("ID de célula a eliminar: ");

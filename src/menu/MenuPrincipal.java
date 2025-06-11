@@ -25,13 +25,11 @@ public class MenuPrincipal {
     private GestorAsistencia gestorAsistencia = new GestorAsistencia(
         gestorClase.getClases(), gestorDiscipulo.getDiscipulos(), gestorMatricula.getMatriculas()
     );
-    private GestorCelula gestorCelula = new GestorCelula(gestorDisciplina);
+    private GestorCelula gestorCelula = new GestorCelula(gestorDisciplina.getDisciplinas(), gestorDiscipulo.getDiscipulos());
     private DeterminarAsistencia determinarAsistencia = new DeterminarAsistencia(
         gestorDiscipulado.getDiscipulados(), gestorClase.getClases(), gestorMatricula.getMatriculas(), 
         gestorDiscipulo.getDiscipulos(), gestorAsistencia.getAsistencias()
     );
-    
-
 
     public void mostrarMenu() {
         int opcion;
@@ -68,7 +66,6 @@ public class MenuPrincipal {
                 case 9 -> System.out.println("Saliendo del sistema...");
                 default -> System.out.println("Opción inválida. Intente de nuevo.");
             }
-
         } while (opcion != 8);
     }
 }
