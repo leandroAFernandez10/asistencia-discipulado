@@ -6,8 +6,8 @@ import gestores.GestorCelula;
 import gestores.GestorClase;
 import gestores.GestorDisciplina;
 import gestores.GestorDiscipulado;
-import gestores.GestorMatricula;
 import gestores.GestorDiscipulo;
+import gestores.GestorMatricula;
 import java.util.Scanner;
 
 public class MenuPrincipal {
@@ -18,13 +18,14 @@ public class MenuPrincipal {
     private GestorDiscipulo gestorDiscipulo = new GestorDiscipulo();
     private GestorDiscipulado gestorDiscipulado = new GestorDiscipulado(gestorDisciplina.getDisciplinas());
     private GestorClase gestorClase = new GestorClase();
-    private GestorAsistencia gestorAsistencia = new GestorAsistencia(
-        gestorClase.getClases(), gestorDiscipulo.getDiscipulos()
-    );
-    private GestorCelula gestorCelula = new GestorCelula(gestorDisciplina);
     private GestorMatricula gestorMatricula = new GestorMatricula(
         gestorDiscipulo.getDiscipulos(), gestorDiscipulado.getDiscipulados()
     );
+    private GestorAsistencia gestorAsistencia = new GestorAsistencia(
+        gestorClase.getClases(), gestorDiscipulo.getDiscipulos(), gestorMatricula.getMatriculas()
+    );
+    private GestorCelula gestorCelula = new GestorCelula(gestorDisciplina);
+
 
     public void mostrarMenu() {
         int opcion;

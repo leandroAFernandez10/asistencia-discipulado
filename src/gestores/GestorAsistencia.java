@@ -3,6 +3,8 @@ package gestores;
 import entidades.Asistencia;
 import entidades.Clase;
 import entidades.Discipulo;
+import entidades.Matricula;
+import entidades.Discipulado;
 import java.util.*;
 
 public class GestorAsistencia {
@@ -12,10 +14,13 @@ public class GestorAsistencia {
 
     private List<Clase> clasesDisponibles;
     private List<Discipulo> discipulosDisponibles;
+    private List<Matricula> matriculasDisponibles;
 
-    public GestorAsistencia(List<Clase> clases, List<Discipulo> discipulos) {
+
+    public GestorAsistencia(List<Clase> clases, List<Discipulo> discipulos, List<Matricula> matriculas) {
         this.clasesDisponibles = clases;
         this.discipulosDisponibles = discipulos;
+        this.matriculasDisponibles = matriculas;
     }
 
     public void menuAsistencias() {
@@ -23,9 +28,9 @@ public class GestorAsistencia {
         do {
             System.out.println("\n--- Gestor de Asistencias ---");
             System.out.println("1. Registrar asistencia");
-            System.out.println("2. Editar asistencia");
-            System.out.println("3. Eliminar asistencia");
-            System.out.println("4. Listar asistencias");
+            System.out.println("2. Eliminar asistencia");
+            System.out.println("3. Listar asistencias");
+            System.out.println("4. Planilla de asistencia por clase");
             System.out.println("5. Volver al menú principal");
             System.out.print("Opción: ");
 
@@ -39,9 +44,9 @@ public class GestorAsistencia {
 
             switch (opcion) {
                 case 1 -> registrarAsistencia();
-                case 2 -> editarAsistencia();
-                case 3 -> eliminarAsistencia();
-                case 4 -> listarAsistencias();
+                case 2 -> eliminarAsistencia();
+                case 3 -> listarAsistencias();
+                case 4 -> listarAsistenciasPorClase();
                 case 5 -> System.out.println("Volviendo...");
                 default -> System.out.println("Opción inválida.");
             }
@@ -49,35 +54,84 @@ public class GestorAsistencia {
     }
 
     public void registrarAsistencia() {
-        Clase clase = seleccionarClase();
-        Discipulo discipulo = seleccionarDiscipulo();
+        Scanner scanner = new Scanner(System.in);
 
-        if (clase != null && discipulo != null) {
-            System.out.print("¿Estuvo presente? (s/n): ");
-            String r = scanner.nextLine().toLowerCase();
-            boolean presente = r.equals("s");
-
-            Asistencia a = new Asistencia(clase, discipulo, presente);
-            asistencias.add(a);
-            System.out.println("Asistencia registrada.");
+        if (clasesDisponibles.isEmpty()) {
+            System.out.println("No hay clases registradas.");
+            return;
         }
+
+        System.out.println("Clases disponibles:");
+        for (Clase clase : clasesDisponibles) {
+            System.out.println("ID: " + clase.getId() + " | Tema: " + clase.getTema());
+        }
+
+        System.out.print("Ingrese el ID de la clase para registrar asistencia: ");
+        int idClase = scanner.nextInt();
+        Clase claseSeleccionada = buscarClasePorId(idClase);
+
+        if (claseSeleccionada == null) {
+            System.out.println("Clase no encontrada.");
+            return;
+        }
+
+        Discipulado discipulado = claseSeleccionada.getDiscipulado();
+
+        if (discipulado == null) {
+            System.out.println("La clase no está asociada a ningún discipulado.");
+            return;
+        }
+
+        List<Matricula> matriculas = new ArrayList<>();
+        for (Matricula m : matriculasDisponibles) {
+            if (m.getDiscipulado().equals(discipulado)) {
+                matriculas.add(m);
+            }
+        }
+
+        if (matriculas.isEmpty()) {
+            System.out.println("No hay discípulos matriculados en este discipulado.");
+            return;
+        }
+
+        // Paso 4: Obtener discípulos desde matrículas
+        List<Discipulo> discipulos = new ArrayList<>();
+        for (Matricula matricula : matriculas) {
+            discipulos.add(matricula.getDiscipulo());
+        }
+
+        // Paso 5: Mostrar discípulos
+        System.out.println("Discípulos matriculados en este discipulado:");
+        for (Discipulo d : discipulos) {
+            System.out.println("ID: " + d.getId() + " | Nombre: " + d.getNombre());
+        }
+
+        // Paso 6: Registrar asistencia
+        System.out.println("Ingrese los ID de los discípulos que asistieron a la clase (0 para terminar):");
+
+        while (true) {
+            System.out.print("ID del discípulo presente: ");
+            int idDiscipulo = scanner.nextInt();
+            if (idDiscipulo == 0) break;
+
+            Discipulo discipulo = buscarDiscipuloEnLista(idDiscipulo, discipulos);
+            if (discipulo == null) {
+                System.out.println("ID inválido. Intente nuevamente.");
+            } else {
+                // Verificar si ya se registró esa asistencia
+                if (asistenciaYaRegistrada(claseSeleccionada, discipulo)) {
+                    System.out.println("La asistencia ya fue registrada para este discípulo.");
+                } else {
+                    Asistencia nuevaAsistencia = new Asistencia(claseSeleccionada, discipulo);
+                    asistencias.add(nuevaAsistencia);
+                    System.out.println("✔ Asistencia registrada para " + discipulo.getNombre());
+                }
+            }
+        }
+
+        System.out.println("Registro de asistencia completado.");
     }
 
-    public void editarAsistencia() {
-        listarAsistencias();
-        System.out.print("Seleccione el número de asistencia a editar: ");
-        int index = Integer.parseInt(scanner.nextLine()) - 1;
-
-        if (index >= 0 && index < asistencias.size()) {
-            Asistencia a = asistencias.get(index);
-            System.out.print("¿Nuevo valor? Presente (s/n): ");
-            boolean nuevoValor = scanner.nextLine().toLowerCase().equals("s");
-            a.setPresente(nuevoValor);
-            System.out.println("Asistencia actualizada.");
-        } else {
-            System.out.println("Índice inválido.");
-        }
-    }
 
     public void eliminarAsistencia() {
         listarAsistencias();
@@ -101,12 +155,15 @@ public class GestorAsistencia {
             for (Asistencia a : asistencias) {
                 System.out.println(i++ + ". " + a.getDiscipulo().getNombreCompleto()
                     + " | Clase: " + a.getClase().getTema()
-                    + " (" + a.getClase().getFecha() + ")"
-                    + " => " + (a.isPresente() ? "Presente" : "Ausente"));
+                    + " (" + a.getClase().getFecha() + ")");
             }
         }
     }
 
+    public void listarAsistenciasPorClase(){
+        
+    }
+    
     private Clase seleccionarClase() {
         if (clasesDisponibles.isEmpty()) {
             System.out.println("No hay clases disponibles.");
@@ -150,4 +207,28 @@ public class GestorAsistencia {
     public List<Asistencia> getAsistencias() {
         return asistencias;
     }
+    
+    private Clase buscarClasePorId(int id) {
+        for (Clase c : clasesDisponibles) {
+            if (c.getId() == id) return c;
+        }
+        return null;
+    }
+
+    private Discipulo buscarDiscipuloEnLista(int id, List<Discipulo> discipulos) {
+        for (Discipulo d : discipulos) {
+            if (d.getId() == id) return d;
+        }
+        return null;
+    }
+
+    private boolean asistenciaYaRegistrada(Clase clase, Discipulo discipulo) {
+        for (Asistencia a : asistencias) {
+            if (a.getClase().equals(clase) && a.getDiscipulo().equals(discipulo)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
