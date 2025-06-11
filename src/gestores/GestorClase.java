@@ -54,7 +54,7 @@ public class GestorClase {
         System.out.print("Fecha: ");
         String fecha = scanner.nextLine();
         
-        System.out.println("Seleccione la disciplina asociada:");
+        System.out.println("Seleccione un discipulado asociada:");
         
         for (Discipulado d : discipuladosDisponibles) {
             System.out.println(d.getId() + ". " + d.getNombre());
@@ -68,7 +68,7 @@ public class GestorClase {
             clases.add(nueva);
             System.out.println("Clase registrada.");
         } else {
-            System.out.println("Disciplina no encontrada.");
+            System.out.println("Discipulado no encontrada.");
         }
     }
 

@@ -9,6 +9,7 @@ import gestores.GestorDiscipulado;
 import gestores.GestorDiscipulo;
 import gestores.GestorMatricula;
 import servicios.DeterminarAsistencia;
+import servicios.GeneradorDeAlertas;
 import java.util.Scanner;
 
 public class MenuPrincipal {
@@ -30,7 +31,14 @@ public class MenuPrincipal {
         gestorDiscipulado.getDiscipulados(), gestorClase.getClases(), gestorMatricula.getMatriculas(), 
         gestorDiscipulo.getDiscipulos(), gestorAsistencia.getAsistencias()
     );
-
+    private GeneradorDeAlertas generadorDeAlertas = new GeneradorDeAlertas(
+        gestorCelula.getCelulas(),
+        gestorDiscipulado.getDiscipulados(),
+        gestorClase.getClases(),
+        gestorMatricula.getMatriculas(),
+        gestorAsistencia.getAsistencias()
+    );
+        
     public void mostrarMenu() {
         int opcion;
         do {
@@ -43,7 +51,8 @@ public class MenuPrincipal {
             System.out.println("6. Gestor de Asistencias");
             System.out.println("7. Gestor de Células");
             System.out.println("8. Control de Porcentaje de Asistencias");
-            System.out.println("9. Salir");
+            System.out.println("9. Alertas de incumplimiento");
+            System.out.println("0. Salir");
             System.out.print("Seleccione una opción: ");
 
             try {
@@ -63,9 +72,10 @@ public class MenuPrincipal {
                 case 6 -> gestorAsistencia.menuAsistencias();
                 case 7 -> gestorCelula.menuCelulas();
                 case 8 -> determinarAsistencia.listarPorcentajeAsistencia();
-                case 9 -> System.out.println("Saliendo del sistema...");
+                case 9 -> generadorDeAlertas.generarAlertas();
+                case 10 -> System.out.println("Saliendo del sistema...");
                 default -> System.out.println("Opción inválida. Intente de nuevo.");
             }
-        } while (opcion != 8);
+        } while (opcion != 0);
     }
 }

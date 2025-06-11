@@ -57,17 +57,17 @@ public class GestorCelula {
             System.out.println("No se pudo seleccionar una disciplina. Cancelando operación.");
             return;
         }
-        Discipulo anfitrionSeleccionado = seleccionarDiscipulo();
+        Discipulo anfitrionSeleccionado = seleccionarDiscipulo("anfitrión");
         if (anfitrionSeleccionado == null) {
             System.out.println("No se pudo seleccionar una disciplina. Cancelando operación.");
             return;
         }
-        Discipulo timonelSeleccionado = seleccionarDiscipulo();
+        Discipulo timonelSeleccionado = seleccionarDiscipulo("timonel");
         if (timonelSeleccionado == null) {
             System.out.println("No se pudo seleccionar una disciplina. Cancelando operación.");
             return;
         }
-        Discipulo colaboradorSeleccionado = seleccionarDiscipulo();
+        Discipulo colaboradorSeleccionado = seleccionarDiscipulo("colaborador");
         if (colaboradorSeleccionado == null) {
             System.out.println("No se pudo seleccionar una disciplina. Cancelando operación.");
             return;
@@ -101,7 +101,27 @@ public class GestorCelula {
             } else {
                 System.out.println("No se seleccionó una nueva disciplina. Se mantiene la anterior.");
             }
-
+            
+            Discipulo nuevoAnfitrion = seleccionarDiscipulo("Anfitrion");
+            if (nuevoAnfitrion != null) {
+                c.setAnfitrion(nuevoAnfitrion);
+            } else {
+                System.out.println("No se seleccionó una nueva disciplina. Se mantiene la anterior.");
+            }
+            
+            Discipulo nuevoTimonel = seleccionarDiscipulo("Timonel");
+            if (nuevoTimonel != null) {
+                c.setTimonel(nuevoTimonel);
+            } else {
+                System.out.println("No se seleccionó una nueva disciplina. Se mantiene la anterior.");
+            }
+            
+            Discipulo nuevoColaborador = seleccionarDiscipulo("Colaborador");
+            if (nuevoColaborador != null) {
+                c.setAnfitrion(nuevoColaborador);
+            } else {
+                System.out.println("No se seleccionó una nueva disciplina. Se mantiene la anterior.");
+            }            
             System.out.print("Nuevo estado (Activa/Inactiva): ");
             String entradaEstado = scanner.nextLine();
             try {
@@ -135,13 +155,13 @@ public class GestorCelula {
         return null;
     }
 
-    private Discipulo seleccionarDiscipulo() {
+    private Discipulo seleccionarDiscipulo(String rol) {
         if (discipulosDisponibles.isEmpty()) {
             System.out.println("No hay discipulos disponibles. Cargue uno primero.");
             return null;
         }
 
-        System.out.println("--- Seleccione un discipulo ---");
+        System.out.println("--- Seleccione un " + rol +" ---");
         for (Discipulo d : discipulosDisponibles) {
             System.out.println("ID: " + d.getId() + " - " + d.getNombre());
         }
