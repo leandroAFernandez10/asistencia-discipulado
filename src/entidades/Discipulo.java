@@ -40,7 +40,7 @@ public class Discipulo {
     }
 
     public void setApellido(String apellido) {
-        this.nombre = nombre;
+        this.apellido = apellido;
     }
     
     public void setGenero(Genero genero) {

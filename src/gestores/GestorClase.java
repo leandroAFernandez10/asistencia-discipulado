@@ -2,11 +2,17 @@ package gestores;
 
 import java.util.*;
 import entidades.Clase;
+import entidades.Discipulado;
 
 public class GestorClase {
     private List<Clase> clases = new ArrayList<>();
+    private List<Discipulado> discipuladosDisponibles; 
     private int contadorId = 1;
     private Scanner scanner = new Scanner(System.in);
+    
+    public GestorClase(List<Discipulado> discipulados){
+        this.discipuladosDisponibles = discipulados;
+    }
 
     public void menuClases() {
         int opcion;
@@ -39,14 +45,31 @@ public class GestorClase {
     }
 
     public void crearClase() {
+        if (discipuladosDisponibles.isEmpty()) {
+            System.out.println("No hay disciplinas disponibles. Debe crear una primero.");
+            return;
+        }        
         System.out.print("Tema: ");
         String tema = scanner.nextLine();
         System.out.print("Fecha: ");
         String fecha = scanner.nextLine();
-        // En el prototipo no cargamos el discipulado en profundidad, se puede agregar si ya tenés los gestores.
-        Clase nueva = new Clase(contadorId++, tema, fecha, null);
-        clases.add(nueva);
-        System.out.println("Clase registrada.");
+        
+        System.out.println("Seleccione la disciplina asociada:");
+        
+        for (Discipulado d : discipuladosDisponibles) {
+            System.out.println(d.getId() + ". " + d.getNombre());
+        }
+        System.out.print("ID de disciplina: ");
+        int idDisciplina = Integer.parseInt(scanner.nextLine());
+        Discipulado discipulado = buscarDiscipuladoPorId(idDisciplina);
+
+        if (discipulado != null) {
+            Clase nueva = new Clase(contadorId++, tema, fecha, discipulado);
+            clases.add(nueva);
+            System.out.println("Clase registrada.");
+        } else {
+            System.out.println("Disciplina no encontrada.");
+        }
     }
 
     public void editarClase() {
@@ -99,5 +122,13 @@ public class GestorClase {
 
     public List<Clase> getClases() {
         return clases;
+    }
+
+    
+    private Discipulado buscarDiscipuladoPorId(int id) {
+        for (Discipulado d : discipuladosDisponibles) {
+            if (d.getId() == id) return d;
+        }
+        return null;
     }
 }

@@ -44,7 +44,7 @@ public class GestorDiscipulo {
         String nombre = scanner.nextLine();
         System.out.print("Apellido: ");
         String apellido = scanner.nextLine();
-        System.out.print("Estado (Femenino/Masculino): ");
+        System.out.print("Género (Femenino/Masculino): ");
         String generoTexto = scanner.nextLine();
         try {
             Genero genero = Genero.desdeTexto(generoTexto);
@@ -74,7 +74,7 @@ public class GestorDiscipulo {
             try {
                 Genero nuevoGenero = Genero.desdeTexto(entradaGenero);
                 d.setGenero(nuevoGenero);
-                System.out.println("Célula actualizada.");
+                System.out.println("Discípulo actualizado.");
             } catch (IllegalArgumentException e) {
                 System.out.println("Estado inválido. No se actualizó el estado.");
             }
