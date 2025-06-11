@@ -17,7 +17,7 @@ public class GestorClase {
     public void menuClases() {
         int opcion;
         do {
-            System.out.println("\n--- Gestor de Clases ---");
+            System.out.println("\n--- Gestor de Clases ---"); 
             System.out.println("1. Crear clase");
             System.out.println("2. Editar clase");
             System.out.println("3. Eliminar clase");
