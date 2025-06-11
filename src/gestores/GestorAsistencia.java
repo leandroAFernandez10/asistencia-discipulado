@@ -9,7 +9,6 @@ import java.util.*;
 
 public class GestorAsistencia {
     private List<Asistencia> asistencias = new ArrayList<>();
-    private int contadorId = 1;
     private Scanner scanner = new Scanner(System.in);
 
     private List<Clase> clasesDisponibles;

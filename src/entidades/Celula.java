@@ -1,7 +1,5 @@
 package entidades;
 
-import entidades.Disciplina;
-import entidades.Discipulo;
 import enumeracion.EstadoCelula;  
 
 public class Celula {
