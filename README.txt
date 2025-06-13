@@ -1,4 +1,4 @@
- CREDENCIALES DE ACCESO: 
+CREDENCIALES DE ACCESO: 
   Usuario: admin
   Contraseña: 1234
 
