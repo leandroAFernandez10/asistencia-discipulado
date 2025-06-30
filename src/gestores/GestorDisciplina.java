@@ -1,12 +1,20 @@
 package gestores;
 
-import java.util.*;
 import entidades.Disciplina;
+import dao.DisciplinaDAO;
+import java.util.List;
+import java.util.Scanner;
+import java.sql.SQLException;
 
 public class GestorDisciplina {
-    private List<Disciplina> disciplinas = new ArrayList<>();
-    private int contadorId = 1;
+    private List<Disciplina> disciplinas;
+    private DisciplinaDAO disciplinaDAO;
     private Scanner scanner = new Scanner(System.in);
+
+    public GestorDisciplina(List<Disciplina> disciplinas, DisciplinaDAO dao) {
+        this.disciplinas = disciplinas;
+        this.disciplinaDAO = dao;
+    }
 
     public void menuDisciplinas() {
         int opcion;
@@ -23,12 +31,15 @@ public class GestorDisciplina {
                 opcion = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Entrada inválida. Ingrese un número.");
-                opcion = -1; // Evita ejecutar ninguna acción
+                opcion = -1;
                 continue;
             }
 
             switch (opcion) {
-                case 1 -> crearDisciplina();
+                case 1 -> {
+                    Disciplina nueva = crearDisciplina();
+                    if (nueva != null) disciplinas.add(nueva);
+                }
                 case 2 -> editarDisciplina();
                 case 3 -> eliminarDisciplina();
                 case 4 -> listarDisciplinas();
@@ -38,44 +49,81 @@ public class GestorDisciplina {
         } while (opcion != 5);
     }
 
-    public void crearDisciplina() {
+    public Disciplina crearDisciplina() {
         System.out.print("Nombre de la disciplina: ");
         String nombre = scanner.nextLine();
-        Disciplina nueva = new Disciplina(contadorId++, nombre);
-        disciplinas.add(nueva);
-        System.out.println("Disciplina registrada.");
+
+        if (nombre.isBlank()) {
+            System.out.println("El nombre no puede estar vacío.");
+            return null;
+        }
+
+        Disciplina nueva = new Disciplina(nombre);
+        try {
+            disciplinaDAO.guardar(nueva);
+            System.out.println("✔ Disciplina guardada en la base de datos.");
+            return nueva;
+        } catch (SQLException e) {
+            System.out.println("❌ Error al guardar en la BD: " + e.getMessage());
+            return null;
+        }
     }
 
-    public void editarDisciplina() {
+    public Disciplina editarDisciplina() {
         listarDisciplinas();
         System.out.print("ID de disciplina a editar: ");
         int id = Integer.parseInt(scanner.nextLine());
         Disciplina d = buscarPorId(id);
 
         if (d != null) {
-            System.out.print("Nuevo nombre: ");
-            d.setNombre(scanner.nextLine());
-            System.out.println("Disciplina actualizada.");
+            System.out.print("Nuevo nombre [" + d.getNombre() + "]: ");
+            String nuevoNombre = scanner.nextLine();
+            if (!nuevoNombre.isBlank()) d.setNombre(nuevoNombre);
+
+            try {
+                disciplinaDAO.actualizar(d); // ✅ actualizar en BD
+                System.out.println("✔ Disciplina actualizada en la base de datos.");
+            } catch (SQLException e) {
+                System.out.println("❌ Error al actualizar en la BD: " + e.getMessage());
+            }
+
+            return d;
         } else {
-            System.out.println("Disciplina no encontrada.");
+            System.out.println("❌ Disciplina no encontrada.");
+            return null;
         }
     }
 
-    public void eliminarDisciplina() {
+    public Disciplina eliminarDisciplina() {
         listarDisciplinas();
         System.out.print("ID de disciplina a eliminar: ");
         int id = Integer.parseInt(scanner.nextLine());
         Disciplina d = buscarPorId(id);
 
         if (d != null) {
-            disciplinas.remove(d);
-            System.out.println("Disciplina eliminada.");
+            try {
+                disciplinaDAO.eliminar(d.getId()); // ✅ eliminar en BD
+                disciplinas.remove(d);
+                System.out.println("✔ Disciplina eliminada de la base de datos.");
+            } catch (SQLException e) {
+                System.out.println("❌ Error al eliminar de la BD: " + e.getMessage());
+            }
+
+            return d;
         } else {
-            System.out.println("Disciplina no encontrada.");
+            System.out.println("❌ Disciplina no encontrada.");
+            return null;
         }
     }
 
     public void listarDisciplinas() {
+        try {
+            disciplinas = disciplinaDAO.listarTodas(); // ✅ recarga desde BD
+        } catch (SQLException e) {
+            System.out.println("❌ Error al listar disciplinas: " + e.getMessage());
+            return;
+        }
+
         if (disciplinas.isEmpty()) {
             System.out.println("No hay disciplinas registradas.");
         } else {

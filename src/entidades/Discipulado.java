@@ -12,6 +12,10 @@ public class Discipulado {
         this.anio = anio;
         this.disciplina = disciplina;
     }
+    
+    public Discipulado(String nombre, int anio, Disciplina disciplina) {
+        this(-1, nombre, anio, disciplina);
+    }
 
     public int getId() {
         return id;

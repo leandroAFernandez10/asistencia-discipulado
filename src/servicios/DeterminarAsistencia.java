@@ -88,7 +88,7 @@ public class DeterminarAsistencia {
 
             for (Clase clase : clasesDelDiscipulado) {
                 for (Asistencia asistencia : asistencias) {
-                    if (asistencia.getClase().equals(clase) && asistencia.getDiscipulo().equals(discipulo)) {
+                    if (asistencia.getClase().equals(clase) && asistencia.getMatricula().getDiscipulo().equals(discipulo)) {
                         asistenciasContadas++;
                         break;
                     }

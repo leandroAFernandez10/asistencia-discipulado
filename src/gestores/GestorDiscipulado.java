@@ -1,17 +1,22 @@
 package gestores;
 
-import java.util.*;
-import entidades.Discipulado;
 import entidades.Disciplina;
+import entidades.Discipulado;
+import dao.DiscipuladoDAO;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Scanner;
 
 public class GestorDiscipulado {
-    private List<Discipulado> discipulados = new ArrayList<>();
     private List<Disciplina> disciplinasDisponibles;
-    private int contadorId = 1;
+    private List<Discipulado> discipulados;
+    private DiscipuladoDAO discipuladoDAO;
     private Scanner scanner = new Scanner(System.in);
 
-    public GestorDiscipulado(List<Disciplina> disciplinas) {
+    public GestorDiscipulado(List<Disciplina> disciplinas, List<Discipulado> discipulados, DiscipuladoDAO dao) {
         this.disciplinasDisponibles = disciplinas;
+        this.discipulados = discipulados;
+        this.discipuladoDAO = dao;
     }
 
     public void menuDiscipulados() {
@@ -24,17 +29,20 @@ public class GestorDiscipulado {
             System.out.println("4. Listar discipulados");
             System.out.println("5. Volver al menú principal");
             System.out.print("Opción: ");
-            
+
             try {
                 opcion = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Entrada inválida. Ingrese un número.");
-                opcion = -1; // Evita ejecutar ninguna acción
+                opcion = -1;
                 continue;
             }
 
             switch (opcion) {
-                case 1 -> crearDiscipulado();
+                case 1 -> {
+                    Discipulado nuevo = crearDiscipulado();
+                    if (nuevo != null) discipulados.add(nuevo);
+                }
                 case 2 -> editarDiscipulado();
                 case 3 -> eliminarDiscipulado();
                 case 4 -> listarDiscipulados();
@@ -44,10 +52,10 @@ public class GestorDiscipulado {
         } while (opcion != 5);
     }
 
-    public void crearDiscipulado() {
+    public Discipulado crearDiscipulado() {
         if (disciplinasDisponibles.isEmpty()) {
-            System.out.println("No hay disciplinas disponibles. Debe crear una primero.");
-            return;
+            System.out.println("No hay disciplinas disponibles. Cree una primero.");
+            return null;
         }
 
         System.out.print("Nombre del discipulado: ");
@@ -64,46 +72,85 @@ public class GestorDiscipulado {
         Disciplina disciplina = buscarDisciplinaPorId(idDisciplina);
 
         if (disciplina != null) {
-            Discipulado d = new Discipulado(contadorId++, nombre, anio, disciplina);
-            discipulados.add(d);
-            System.out.println("Discipulado registrado.");
+            Discipulado d = new Discipulado(nombre, anio, disciplina); // ID se asigna luego
+            try {
+                discipuladoDAO.guardar(d);  // ✅ Guardar en BD
+                System.out.println("✔ Discipulado guardado en la base de datos.");
+                return d;
+            } catch (SQLException e) {
+                System.out.println("❌ Error al guardar el discipulado: " + e.getMessage());
+                return null;
+            }
         } else {
             System.out.println("Disciplina no encontrada.");
+            return null;
         }
     }
 
-    public void editarDiscipulado() {
+    public Discipulado editarDiscipulado() {
         listarDiscipulados();
         System.out.print("ID del discipulado a editar: ");
         int id = Integer.parseInt(scanner.nextLine());
         Discipulado d = buscarPorId(id);
 
         if (d != null) {
-            System.out.print("Nuevo nombre: ");
-            d.setNombre(scanner.nextLine());
-            System.out.print("Nuevo año: ");
-            d.setAnio(Integer.parseInt(scanner.nextLine()));
-            System.out.println("Discipulado actualizado.");
+            System.out.print("Nuevo nombre [" + d.getNombre() + "]: ");
+            String nombre = scanner.nextLine();
+            if (!nombre.isBlank()) d.setNombre(nombre);
+
+            System.out.print("Nuevo año [" + d.getAnio() + "]: ");
+            String anioTexto = scanner.nextLine();
+            if (!anioTexto.isBlank()) {
+                try {
+                    d.setAnio(Integer.parseInt(anioTexto));
+                } catch (NumberFormatException e) {
+                    System.out.println("Año inválido. Se mantuvo el valor anterior.");
+                }
+            }
+
+            try {
+                discipuladoDAO.actualizar(d);  // ✅ Actualizar en BD
+                System.out.println("✔ Discipulado actualizado en la base de datos.");
+            } catch (SQLException e) {
+                System.out.println("❌ Error al actualizar el discipulado: " + e.getMessage());
+            }
+
+            return d;
         } else {
             System.out.println("Discipulado no encontrado.");
+            return null;
         }
     }
 
-    public void eliminarDiscipulado() {
+    public Discipulado eliminarDiscipulado() {
         listarDiscipulados();
         System.out.print("ID del discipulado a eliminar: ");
         int id = Integer.parseInt(scanner.nextLine());
         Discipulado d = buscarPorId(id);
 
         if (d != null) {
-            discipulados.remove(d);
-            System.out.println("Discipulado eliminado.");
+            try {
+                discipuladoDAO.eliminar(d.getId());  // ✅ Eliminar de la BD
+                discipulados.remove(d);              // Eliminar de la lista local
+                System.out.println("✔ Discipulado eliminado de la base de datos.");
+            } catch (SQLException e) {
+                System.out.println("❌ Error al eliminar el discipulado: " + e.getMessage());
+            }
+            return d;
         } else {
             System.out.println("Discipulado no encontrado.");
+            return null;
         }
     }
 
     public void listarDiscipulados() {
+        try {
+            discipulados = discipuladoDAO.listarTodos(disciplinasDisponibles);; // ✅ Recargar desde BD
+        } catch (SQLException e) {
+            System.out.println("❌ Error al listar discipulados: " + e.getMessage());
+            return;
+        }
+
         if (discipulados.isEmpty()) {
             System.out.println("No hay discipulados registrados.");
         } else {

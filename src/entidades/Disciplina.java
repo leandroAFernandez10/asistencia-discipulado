@@ -8,6 +8,10 @@ public class Disciplina {
         this.id = id;
         this.nombre = nombre;
     }
+    
+    public Disciplina(String nombre) {
+        this(-1, nombre); 
+    }    
 
     public int getId() {
         return id;

@@ -52,6 +52,10 @@ public class Celula {
     public void setLocalidad(String localidad) {
         this.localidad = localidad;
     }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public void setDisciplina(Disciplina disciplina) {
         this.disciplina = disciplina;

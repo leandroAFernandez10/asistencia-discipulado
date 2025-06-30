@@ -1,44 +1,80 @@
 package menu;
 
-// MenuPrincipal.java
-import gestores.GestorAsistencia;
-import gestores.GestorCelula;
-import gestores.GestorClase;
-import gestores.GestorDisciplina;
-import gestores.GestorDiscipulado;
-import gestores.GestorDiscipulo;
-import gestores.GestorMatricula;
-import servicios.DeterminarAsistencia;
-import servicios.GeneradorDeAlertas;
-import java.util.Scanner;
+import conexion.ConexionBD;
+import dao.*;
+import entidades.*;
+import gestores.*;
+import servicios.*;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
 
 public class MenuPrincipal {
     private Scanner scanner = new Scanner(System.in);
 
-    // Gestores
-    private GestorDisciplina gestorDisciplina = new GestorDisciplina();
-    private GestorDiscipulo gestorDiscipulo = new GestorDiscipulo();
-    private GestorDiscipulado gestorDiscipulado = new GestorDiscipulado(gestorDisciplina.getDisciplinas());
-    private GestorClase gestorClase = new GestorClase(gestorDiscipulado.getDiscipulados());
-    private GestorMatricula gestorMatricula = new GestorMatricula(
-        gestorDiscipulo.getDiscipulos(), gestorDiscipulado.getDiscipulados()
-    );
-    private GestorAsistencia gestorAsistencia = new GestorAsistencia(
-        gestorClase.getClases(), gestorDiscipulo.getDiscipulos(), gestorMatricula.getMatriculas()
-    );
-    private GestorCelula gestorCelula = new GestorCelula(gestorDisciplina.getDisciplinas(), gestorDiscipulo.getDiscipulos());
-    private DeterminarAsistencia determinarAsistencia = new DeterminarAsistencia(
-        gestorDiscipulado.getDiscipulados(), gestorClase.getClases(), gestorMatricula.getMatriculas(), 
-        gestorDiscipulo.getDiscipulos(), gestorAsistencia.getAsistencias()
-    );
-    private GeneradorDeAlertas generadorDeAlertas = new GeneradorDeAlertas(
-        gestorCelula.getCelulas(),
-        gestorDiscipulado.getDiscipulados(),
-        gestorClase.getClases(),
-        gestorMatricula.getMatriculas(),
-        gestorAsistencia.getAsistencias()
-    );
-        
+    // Listas compartidas
+    private List<Disciplina> disciplinas;
+    private List<Discipulo> discipulos;
+    private List<Discipulado> discipulados;
+    private List<Clase> clases;
+    private List<Matricula> matriculas;
+    private List<Asistencia> asistencias;
+    private List<Celula> celulas;
+
+    // Gestores y servicios
+    private GestorDisciplina gestorDisciplina;
+    private GestorDiscipulo gestorDiscipulo;
+    private GestorDiscipulado gestorDiscipulado;
+    private GestorClase gestorClase;
+    private GestorMatricula gestorMatricula;
+    private GestorAsistencia gestorAsistencia;
+    private GestorCelula gestorCelula;
+
+    private DeterminarAsistencia determinarAsistencia;
+    private GeneradorDeAlertas generadorDeAlertas;
+
+    public MenuPrincipal() {
+        try {
+            Connection conexion = ConexionBD.getConexion();
+
+            // DAOs
+            DisciplinaDAO disciplinaDAO = new DisciplinaDAO(conexion);
+            DiscipuloDAO discipuloDAO = new DiscipuloDAO(conexion);
+            DiscipuladoDAO discipuladoDAO = new DiscipuladoDAO(conexion);
+            ClaseDAO claseDAO = new ClaseDAO(conexion);
+            MatriculaDAO matriculaDAO = new MatriculaDAO(conexion);
+            AsistenciaDAO asistenciaDAO = new AsistenciaDAO(conexion);
+            CelulaDAO celulaDAO = new CelulaDAO(conexion);
+
+            // Cargar listas desde BD
+            disciplinas = disciplinaDAO.listarTodas();
+            discipulos = discipuloDAO.listarTodos();
+            discipulados = discipuladoDAO.listarTodos(disciplinas);
+            clases = claseDAO.listarTodas(discipulados);
+            matriculas = matriculaDAO.listarTodas(discipulos, discipulados);
+            asistencias = asistenciaDAO.listarTodas(matriculas, clases);
+            celulas = celulaDAO.listarTodas(disciplinas, discipulos);
+
+            // Crear gestores
+            gestorDisciplina = new GestorDisciplina(disciplinas, disciplinaDAO);
+            gestorDiscipulo = new GestorDiscipulo(discipulos, discipuloDAO);
+            gestorDiscipulado = new GestorDiscipulado(disciplinas, discipulados, discipuladoDAO);
+            gestorClase = new GestorClase(discipulados, clases, claseDAO);
+            gestorMatricula = new GestorMatricula(discipulos, discipulados, matriculas, matriculaDAO);
+            gestorAsistencia = new GestorAsistencia(clases, discipulos, matriculas, asistencias, asistenciaDAO);
+            gestorCelula = new GestorCelula(disciplinas, discipulos, celulas, celulaDAO);
+
+            // Crear servicios
+            determinarAsistencia = new DeterminarAsistencia(discipulados, clases, matriculas, discipulos, asistencias);
+            generadorDeAlertas = new GeneradorDeAlertas(celulas, discipulados, clases, matriculas, asistencias);
+
+        } catch (SQLException e) {
+            System.out.println("Error al conectar con la base de datos: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
     public void mostrarMenu() {
         int opcion;
         do {
@@ -58,9 +94,8 @@ public class MenuPrincipal {
             try {
                 opcion = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Entrada inválida. Ingrese un número.");
-                opcion = -1; 
-                continue;
+                System.out.println("Entrada inválida.");
+                opcion = -1;
             }
 
             switch (opcion) {
@@ -69,13 +104,14 @@ public class MenuPrincipal {
                 case 3 -> gestorDiscipulado.menuDiscipulados();
                 case 4 -> gestorClase.menuClases();
                 case 5 -> gestorMatricula.menuMatriculas();
-                case 6 -> gestorAsistencia.menuAsistencias();
+                case 6 -> gestorAsistencia.menuAsistencia();
                 case 7 -> gestorCelula.menuCelulas();
                 case 8 -> determinarAsistencia.listarPorcentajeAsistencia();
                 case 9 -> generadorDeAlertas.generarAlertas();
-                case 10 -> System.out.println("Saliendo del sistema...");
-                default -> System.out.println("Opción inválida. Intente de nuevo.");
+                case 0 -> System.out.println("Saliendo del sistema...");
+                default -> System.out.println("Opción inválida.");
             }
+
         } while (opcion != 0);
     }
 }

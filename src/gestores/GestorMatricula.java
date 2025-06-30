@@ -1,20 +1,33 @@
 package gestores;
 
 import java.util.*;
+import java.sql.SQLException;
 import entidades.Matricula;
 import entidades.Discipulo;
 import entidades.Discipulado;
+import dao.MatriculaDAO;
 
 public class GestorMatricula {
     private List<Matricula> matriculas = new ArrayList<>();
     private List<Discipulo> discipulosDisponibles;
     private List<Discipulado> discipuladosDisponibles;
-    private int contadorId = 1;
+    private MatriculaDAO matriculaDAO;
     private Scanner scanner = new Scanner(System.in);
 
-    public GestorMatricula(List<Discipulo> discipulos, List<Discipulado> discipulados) {
+    public GestorMatricula(List<Discipulo> discipulos, List<Discipulado> discipulados, List<Matricula> matriculas, MatriculaDAO dao) {
         this.discipulosDisponibles = discipulos;
         this.discipuladosDisponibles = discipulados;
+        this.matriculas = matriculas;
+        this.matriculaDAO = dao;
+        cargarDesdeBD();
+    }
+
+    private void cargarDesdeBD() {
+        try {
+            this.matriculas = matriculaDAO.listarTodas(discipulosDisponibles, discipuladosDisponibles);
+        } catch (SQLException e) {
+            System.out.println("Error al cargar matrículas desde la base de datos: " + e.getMessage());
+        }
     }
 
     public void menuMatriculas() {
@@ -32,9 +45,10 @@ public class GestorMatricula {
                 opcion = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Entrada inválida. Ingrese un número.");
-                opcion = -1; // Evita ejecutar ninguna acción
+                opcion = -1;
                 continue;
             }
+
             switch (opcion) {
                 case 1 -> registrarMatricula();
                 case 2 -> editarMatricula();
@@ -54,9 +68,14 @@ public class GestorMatricula {
             System.out.print("Fecha de inscripción (AAAA-MM-DD): ");
             String fecha = scanner.nextLine();
 
-            Matricula m = new Matricula(contadorId++, discipulo, discipulado, fecha);
-            matriculas.add(m);
-            System.out.println("Matrícula registrada.");
+            Matricula m = new Matricula(discipulo, discipulado, fecha);
+            try {
+                matriculaDAO.guardar(m);
+                matriculas.add(m);
+                System.out.println("Matrícula registrada.");
+            } catch (SQLException e) {
+                System.out.println("Error al registrar la matrícula: " + e.getMessage());
+            }
         }
     }
 
@@ -69,7 +88,13 @@ public class GestorMatricula {
         if (m != null) {
             System.out.print("Nueva fecha de inscripción: ");
             m.setFechaInscripcion(scanner.nextLine());
-            System.out.println("Matrícula actualizada.");
+
+            try {
+                matriculaDAO.actualizar(m);
+                System.out.println("Matrícula actualizada.");
+            } catch (SQLException e) {
+                System.out.println("Error al actualizar la matrícula: " + e.getMessage());
+            }
         } else {
             System.out.println("Matrícula no encontrada.");
         }
@@ -82,8 +107,13 @@ public class GestorMatricula {
         Matricula m = buscarPorId(id);
 
         if (m != null) {
-            matriculas.remove(m);
-            System.out.println("Matrícula eliminada.");
+            try {
+                matriculaDAO.eliminar(m.getId());
+                matriculas.remove(m);
+                System.out.println("Matrícula eliminada.");
+            } catch (SQLException e) {
+                System.out.println("Error al eliminar la matrícula: " + e.getMessage());
+            }
         } else {
             System.out.println("Matrícula no encontrada.");
         }
@@ -153,5 +183,4 @@ public class GestorMatricula {
     public List<Matricula> getMatriculas() {
         return matriculas;
     }
-
 }

@@ -4,10 +4,17 @@ public class Matricula {
     private int id;
     private Discipulo discipulo;
     private Discipulado discipulado;
-    private String fechaInscripcion; // Formato: "YYYY-MM-DD"
-
+    private String fechaInscripcion;
+    
     public Matricula(int id, Discipulo discipulo, Discipulado discipulado, String fechaInscripcion) {
-        this.id = id;
+    this.id = id;
+    this.discipulo = discipulo;
+    this.discipulado = discipulado;
+    this.fechaInscripcion = fechaInscripcion;
+}
+
+
+    public Matricula(Discipulo discipulo, Discipulado discipulado, String fechaInscripcion) {
         this.discipulo = discipulo;
         this.discipulado = discipulado;
         this.fechaInscripcion = fechaInscripcion;
@@ -31,6 +38,10 @@ public class Matricula {
     }
 
     // Setters
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setFechaInscripcion(String fechaInscripcion) {
         this.fechaInscripcion = fechaInscripcion;
     }

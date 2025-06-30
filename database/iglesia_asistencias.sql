@@ -8,7 +8,8 @@ CREATE TABLE discipulo (
   apellido VARCHAR(50),
   dni VARCHAR(20) UNIQUE,
   email VARCHAR(100),
-  telefono VARCHAR(20)
+  telefono VARCHAR(20),
+  genero ENUM('Masculino', 'Femenino'),
 );
 
 -- Tabla Disciplina
@@ -55,21 +56,17 @@ CREATE TABLE asistencia (
   FOREIGN KEY (id_clase) REFERENCES clase(id_clase)
 );
 
--- Tabla Célula
+ -- Tabla Celula
 CREATE TABLE celula (
   id_celula INT AUTO_INCREMENT PRIMARY KEY,
   localidad VARCHAR(100),
-  caracteristica_especial VARCHAR(100),
-  estado ENUM('Activa', 'Inactiva')
+  timonel INT,
+  anfitrion INT,
+  colaborador INT,
+  anio YEAR,
+  estado ENUM('Activa', 'Inactiva'),
+  FOREIGN KEY (timonel) REFERENCES discipulo(id_discípulo),
+  FOREIGN KEY (anfitrion) REFERENCES discipulo(id_discípulo),
+  FOREIGN KEY (colaborador) REFERENCES discipulo(id_discípulo)
 );
 
--- Tabla Rol en la Célula
-CREATE TABLE rol_celula (
-  id_rol INT AUTO_INCREMENT PRIMARY KEY,
-  id_celula INT,
-  id_discípulo INT,
-  tipo_rol ENUM('Timonel', 'Anfitrión'),
-  anio YEAR,
-  FOREIGN KEY (id_celula) REFERENCES celula(id_celula),
-  FOREIGN KEY (id_discípulo) REFERENCES discipulo(id_discípulo)
-);

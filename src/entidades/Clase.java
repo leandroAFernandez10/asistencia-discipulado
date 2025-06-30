@@ -29,11 +29,19 @@ public class Clase {
         return discipulado;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public void setTema(String tema) {
         this.tema = tema;
     }
 
     public void setFecha(String fecha) {
         this.fecha = fecha;
+    }
+       
+    public void setDiscipulado (Discipulado discipulado) {
+        this.discipulado = discipulado;
     }
 }

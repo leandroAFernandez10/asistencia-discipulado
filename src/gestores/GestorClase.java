@@ -1,23 +1,44 @@
 package gestores;
 
-import java.util.*;
+import dao.ClaseDAO;
 import entidades.Clase;
 import entidades.Discipulado;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class GestorClase {
     private List<Clase> clases = new ArrayList<>();
-    private List<Discipulado> discipuladosDisponibles; 
+    private List<Discipulado> discipuladosDisponibles;
+    private ClaseDAO claseDAO;
     private int contadorId = 1;
     private Scanner scanner = new Scanner(System.in);
-    
-    public GestorClase(List<Discipulado> discipulados){
+
+    public GestorClase(List<Discipulado> discipulados, List<Clase> clases, ClaseDAO dao) {
         this.discipuladosDisponibles = discipulados;
+        this.clases = clases;
+        this.claseDAO = dao;
+        cargarDesdeBD();
+    }
+
+    private void cargarDesdeBD() {
+        try {
+            this.clases = claseDAO.listarTodas(discipuladosDisponibles);
+            for (Clase c : clases) {
+                if (c.getId() >= contadorId) {
+                    contadorId = c.getId() + 1;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al cargar clases desde la base de datos: " + e.getMessage());
+        }
     }
 
     public void menuClases() {
         int opcion;
         do {
-            System.out.println("\n--- Gestor de Clases ---"); 
+            System.out.println("\n--- Gestor de Clases ---");
             System.out.println("1. Crear clase");
             System.out.println("2. Editar clase");
             System.out.println("3. Eliminar clase");
@@ -28,9 +49,8 @@ public class GestorClase {
             try {
                 opcion = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Entrada inválida. Ingrese un número.");
-                opcion = -1; // Evita ejecutar ninguna acción
-                continue;
+                System.out.println("Entrada inválida.");
+                opcion = -1;
             }
 
             switch (opcion) {
@@ -45,30 +65,25 @@ public class GestorClase {
     }
 
     public void crearClase() {
-        if (discipuladosDisponibles.isEmpty()) {
-            System.out.println("No hay disciplinas disponibles. Debe crear una primero.");
-            return;
-        }        
         System.out.print("Tema: ");
         String tema = scanner.nextLine();
-        System.out.print("Fecha: ");
-        String fecha = scanner.nextLine();
-        
-        System.out.println("Seleccione un discipulado asociada:");
-        
-        for (Discipulado d : discipuladosDisponibles) {
-            System.out.println(d.getId() + ". " + d.getNombre());
-        }
-        System.out.print("ID de disciplina: ");
-        int idDisciplina = Integer.parseInt(scanner.nextLine());
-        Discipulado discipulado = buscarDiscipuladoPorId(idDisciplina);
 
-        if (discipulado != null) {
-            Clase nueva = new Clase(contadorId++, tema, fecha, discipulado);
+        System.out.print("Fecha (AAAA-MM-DD): ");
+        String fecha = scanner.nextLine();
+
+        Discipulado discipulado = seleccionarDiscipulado();
+        if (discipulado == null) {
+            System.out.println("No se pudo seleccionar un discipulado.");
+            return;
+        }
+
+        Clase nueva = new Clase(0, tema, fecha, discipulado);
+        try {
+            claseDAO.guardar(nueva);
             clases.add(nueva);
             System.out.println("Clase registrada.");
-        } else {
-            System.out.println("Discipulado no encontrada.");
+        } catch (SQLException e) {
+            System.out.println("Error al guardar clase: " + e.getMessage());
         }
     }
 
@@ -76,16 +91,29 @@ public class GestorClase {
         listarClases();
         System.out.print("ID de clase a editar: ");
         int id = Integer.parseInt(scanner.nextLine());
-
         Clase c = buscarPorId(id);
-        if (c != null) {
-            System.out.print("Nuevo tema: ");
-            c.setTema(scanner.nextLine());
-            System.out.print("Nueva fecha: ");
-            c.setFecha(scanner.nextLine());
-            System.out.println("Clase actualizada.");
-        } else {
+
+        if (c == null) {
             System.out.println("Clase no encontrada.");
+            return;
+        }
+
+        System.out.print("Nuevo tema: ");
+        c.setTema(scanner.nextLine());
+
+        System.out.print("Nueva fecha (AAAA-MM-DD): ");
+        c.setFecha(scanner.nextLine());
+
+        Discipulado nuevoDiscipulado = seleccionarDiscipulado();
+        if (nuevoDiscipulado != null) {
+            c.setDiscipulado(nuevoDiscipulado);
+        }
+
+        try {
+            claseDAO.actualizar(c);
+            System.out.println("Clase actualizada.");
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar clase: " + e.getMessage());
         }
     }
 
@@ -94,9 +122,15 @@ public class GestorClase {
         System.out.print("ID de clase a eliminar: ");
         int id = Integer.parseInt(scanner.nextLine());
         Clase c = buscarPorId(id);
+
         if (c != null) {
-            clases.remove(c);
-            System.out.println("Clase eliminada.");
+            try {
+                claseDAO.eliminar(c.getId());
+                clases.remove(c);
+                System.out.println("Clase eliminada.");
+            } catch (SQLException e) {
+                System.out.println("Error al eliminar clase: " + e.getMessage());
+            }
         } else {
             System.out.println("Clase no encontrada.");
         }
@@ -108,9 +142,33 @@ public class GestorClase {
         } else {
             System.out.println("--- Lista de Clases ---");
             for (Clase c : clases) {
-                System.out.println("ID: " + c.getId() + ", Tema: " + c.getTema() + ", Fecha: " + c.getFecha());
+                System.out.println("ID: " + c.getId() +
+                        ", Tema: " + c.getTema() +
+                        ", Fecha: " + c.getFecha() +
+                        ", Discipulado: " + c.getDiscipulado().getNombre());
             }
         }
+    }
+
+    private Discipulado seleccionarDiscipulado() {
+        if (discipuladosDisponibles.isEmpty()) {
+            System.out.println("No hay discipulados disponibles.");
+            return null;
+        }
+
+        System.out.println("--- Seleccione un discipulado ---");
+        for (Discipulado d : discipuladosDisponibles) {
+            System.out.println("ID: " + d.getId() + " - " + d.getNombre());
+        }
+
+        System.out.print("ID: ");
+        int id = Integer.parseInt(scanner.nextLine());
+        for (Discipulado d : discipuladosDisponibles) {
+            if (d.getId() == id) return d;
+        }
+
+        System.out.println("Discipulado no encontrado.");
+        return null;
     }
 
     public Clase buscarPorId(int id) {
@@ -122,13 +180,5 @@ public class GestorClase {
 
     public List<Clase> getClases() {
         return clases;
-    }
-
-    
-    private Discipulado buscarDiscipuladoPorId(int id) {
-        for (Discipulado d : discipuladosDisponibles) {
-            if (d.getId() == id) return d;
-        }
-        return null;
     }
 }

@@ -73,7 +73,7 @@ public class GeneradorDeAlertas {
                         for (Asistencia asistencia : asistencias) {
                             if (
                                 asistencia.getClase().getId() == clase.getId() &&
-                                asistencia.getDiscipulo().getId() == discipulo.getId()
+                                asistencia.getMatricula().getDiscipulo().getId() == discipulo.getId()
                             ) {
                                 asistenciasDelDiscipulo++;
                             }
