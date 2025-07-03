@@ -132,9 +132,9 @@ public class GestorDiscipulado {
             try {
                 discipuladoDAO.eliminar(d.getId());  // ✅ Eliminar de la BD
                 discipulados.remove(d);              // Eliminar de la lista local
-                System.out.println("✔ Discipulado eliminado de la base de datos.");
+                System.out.println("Discipulado eliminado de la base de datos.");
             } catch (SQLException e) {
-                System.out.println("❌ Error al eliminar el discipulado: " + e.getMessage());
+                System.out.println("Error al eliminar el discipulado: " + e.getMessage());
             }
             return d;
         } else {
@@ -145,9 +145,9 @@ public class GestorDiscipulado {
 
     public void listarDiscipulados() {
         try {
-            discipulados = discipuladoDAO.listarTodos(disciplinasDisponibles);; // ✅ Recargar desde BD
+            discipulados = discipuladoDAO.listarTodos(disciplinasDisponibles);; // Recargar desde BD
         } catch (SQLException e) {
-            System.out.println("❌ Error al listar discipulados: " + e.getMessage());
+            System.out.println("Error al listar discipulados: " + e.getMessage());
             return;
         }
 

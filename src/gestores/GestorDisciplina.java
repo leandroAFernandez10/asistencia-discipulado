@@ -61,10 +61,12 @@ public class GestorDisciplina {
         Disciplina nueva = new Disciplina(nombre);
         try {
             disciplinaDAO.guardar(nueva);
-            System.out.println("✔ Disciplina guardada en la base de datos.");
+            disciplinas.clear();
+            disciplinas.addAll(disciplinaDAO.listarTodas());
+            System.out.println("Disciplina guardada en la base de datos.");
             return nueva;
         } catch (SQLException e) {
-            System.out.println("❌ Error al guardar en la BD: " + e.getMessage());
+            System.out.println("Error al guardar en la BD: " + e.getMessage());
             return null;
         }
     }
@@ -81,15 +83,15 @@ public class GestorDisciplina {
             if (!nuevoNombre.isBlank()) d.setNombre(nuevoNombre);
 
             try {
-                disciplinaDAO.actualizar(d); // ✅ actualizar en BD
-                System.out.println("✔ Disciplina actualizada en la base de datos.");
+                disciplinaDAO.actualizar(d); // actualizar en BD
+                System.out.println("Disciplina actualizada en la base de datos.");
             } catch (SQLException e) {
-                System.out.println("❌ Error al actualizar en la BD: " + e.getMessage());
+                System.out.println("Error al actualizar en la BD: " + e.getMessage());
             }
 
             return d;
         } else {
-            System.out.println("❌ Disciplina no encontrada.");
+            System.out.println("Disciplina no encontrada.");
             return null;
         }
     }
