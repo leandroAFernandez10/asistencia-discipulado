@@ -36,10 +36,7 @@ public class GestorDisciplina {
             }
 
             switch (opcion) {
-                case 1 -> {
-                    Disciplina nueva = crearDisciplina();
-                    if (nueva != null) disciplinas.add(nueva);
-                }
+                case 1 -> crearDisciplina();
                 case 2 -> editarDisciplina();
                 case 3 -> eliminarDisciplina();
                 case 4 -> listarDisciplinas();
@@ -64,7 +61,7 @@ public class GestorDisciplina {
             disciplinas.clear();
             disciplinas.addAll(disciplinaDAO.listarTodas());
             System.out.println("Disciplina guardada en la base de datos.");
-            return nueva;
+            return buscarPorNombre(nombre);
         } catch (SQLException e) {
             System.out.println("Error al guardar en la BD: " + e.getMessage());
             return null;
@@ -146,4 +143,13 @@ public class GestorDisciplina {
     public List<Disciplina> getDisciplinas() {
         return disciplinas;
     }
+    private Disciplina buscarPorNombre(String nombre) {
+    for (Disciplina d : disciplinas) {
+        if (d.getNombre().equalsIgnoreCase(nombre)) {
+            return d;
+        }
+    }
+    return null;
+}
+
 }

@@ -75,6 +75,34 @@ public class MenuPrincipal {
         }
     }
 
+    private void actualizarDatosDesdeBD() {
+        try {
+            disciplinas.clear();
+            disciplinas.addAll(new DisciplinaDAO(ConexionBD.getConexion()).listarTodas());
+
+            discipulos.clear();
+            discipulos.addAll(new DiscipuloDAO(ConexionBD.getConexion()).listarTodos());
+
+            discipulados.clear();
+            discipulados.addAll(new DiscipuladoDAO(ConexionBD.getConexion()).listarTodos(disciplinas));
+
+            clases.clear();
+            clases.addAll(new ClaseDAO(ConexionBD.getConexion()).listarTodas(discipulados));
+
+            matriculas.clear();
+            matriculas.addAll(new MatriculaDAO(ConexionBD.getConexion()).listarTodas(discipulos, discipulados));
+
+            asistencias.clear();
+            asistencias.addAll(new AsistenciaDAO(ConexionBD.getConexion()).listarTodas(matriculas, clases));
+
+            celulas.clear();
+            celulas.addAll(new CelulaDAO(ConexionBD.getConexion()).listarTodas(disciplinas, discipulos));
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar datos desde la BD: " + e.getMessage());
+        }
+}
+
+    
     public void mostrarMenu() {
         int opcion;
         do {
@@ -98,19 +126,20 @@ public class MenuPrincipal {
                 opcion = -1;
             }
 
-            switch (opcion) {
-                case 1 -> gestorDiscipulo.menuDiscipulos();
-                case 2 -> gestorDisciplina.menuDisciplinas();
-                case 3 -> gestorDiscipulado.menuDiscipulados();
-                case 4 -> gestorClase.menuClases();
-                case 5 -> gestorMatricula.menuMatriculas();
-                case 6 -> gestorAsistencia.menuAsistencia();
-                case 7 -> gestorCelula.menuCelulas();
-                case 8 -> determinarAsistencia.listarPorcentajeAsistencia();
-                case 9 -> generadorDeAlertas.generarAlertas();
-                case 0 -> System.out.println("Saliendo del sistema...");
-                default -> System.out.println("Opción inválida.");
-            }
+        switch (opcion) {
+            case 1 -> { actualizarDatosDesdeBD(); gestorDiscipulo.menuDiscipulos(); }
+            case 2 -> { actualizarDatosDesdeBD(); gestorDisciplina.menuDisciplinas(); }
+            case 3 -> { actualizarDatosDesdeBD(); gestorDiscipulado.menuDiscipulados(); }
+            case 4 -> { actualizarDatosDesdeBD(); gestorClase.menuClases(); }
+            case 5 -> { actualizarDatosDesdeBD(); gestorMatricula.menuMatriculas(); }
+            case 6 -> { actualizarDatosDesdeBD(); gestorAsistencia.menuAsistencia(); }
+            case 7 -> { actualizarDatosDesdeBD(); gestorCelula.menuCelulas(); }
+            case 8 -> { actualizarDatosDesdeBD(); determinarAsistencia.listarPorcentajeAsistencia(); }
+            case 9 -> { actualizarDatosDesdeBD(); generadorDeAlertas.generarAlertas(); }
+            case 0 -> System.out.println("Saliendo del sistema...");
+            default -> System.out.println("Opción inválida.");
+        }
+
 
         } while (opcion != 0);
     }

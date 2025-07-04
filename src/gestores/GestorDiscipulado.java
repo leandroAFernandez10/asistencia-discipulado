@@ -39,10 +39,7 @@ public class GestorDiscipulado {
             }
 
             switch (opcion) {
-                case 1 -> {
-                    Discipulado nuevo = crearDiscipulado();
-                    if (nuevo != null) discipulados.add(nuevo);
-                }
+                case 1 -> crearDiscipulado();
                 case 2 -> editarDiscipulado();
                 case 3 -> eliminarDiscipulado();
                 case 4 -> listarDiscipulados();
@@ -74,11 +71,11 @@ public class GestorDiscipulado {
         if (disciplina != null) {
             Discipulado d = new Discipulado(nombre, anio, disciplina); // ID se asigna luego
             try {
-                discipuladoDAO.guardar(d);  // ✅ Guardar en BD
-                System.out.println("✔ Discipulado guardado en la base de datos.");
+                discipuladoDAO.guardar(d);  // Guardar en BD
+                System.out.println("Discipulado guardado en la base de datos.");
                 return d;
             } catch (SQLException e) {
-                System.out.println("❌ Error al guardar el discipulado: " + e.getMessage());
+                System.out.println("Error al guardar el discipulado: " + e.getMessage());
                 return null;
             }
         } else {

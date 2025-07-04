@@ -16,11 +16,15 @@ public class DiscipuladoDAO {
 
     public void guardar(Discipulado d) throws SQLException {
         String sql = "INSERT INTO discipulado (id_disciplina, nombre, anio) VALUES (?, ?, ?)";
-        PreparedStatement stmt = conexion.prepareStatement(sql);
+        PreparedStatement stmt = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setInt(1, d.getDisciplina().getId());
         stmt.setString(2, d.getNombre());
         stmt.setInt(3, d.getAnio());
         stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+        if (rs.next()) {
+            d.setId(rs.getInt(1));
+    }
     }
 
     public void actualizar(Discipulado d) throws SQLException {

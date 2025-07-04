@@ -32,6 +32,11 @@ public class Discipulado {
     public Disciplina getDisciplina() {
         return disciplina;
     }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
+
 
     public void setNombre(String nombre) {
     }
