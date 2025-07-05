@@ -32,7 +32,7 @@ public class GestorAsistencia {
         try {
             this.asistencias = asistenciaDAO.listarTodas(matriculas, clases);
         } catch (SQLException e) {
-            System.out.println("❌ Error al cargar asistencias desde la base de datos: " + e.getMessage());
+            System.out.println("Error al cargar asistencias desde la base de datos: " + e.getMessage());
             this.asistencias = new ArrayList<>();
         }
     }
@@ -79,14 +79,14 @@ public class GestorAsistencia {
                     try {
                         if (!asistenciaDAO.asistenciaYaRegistrada(clase.getId(), m.getId())) {
                             Asistencia nueva = new Asistencia(clase, m);
-                            asistenciaDAO.guardar(nueva); // Guarda en BD y setea el ID
-                            asistencias.add(nueva);       // Agrega a la lista en memoria
-                            System.out.println("✔ Asistencia registrada.");
+                            asistenciaDAO.guardar(nueva);
+                            asistencias.add(nueva);
+                            System.out.println("Asistencia registrada.");
                         } else {
-                            System.out.println("⚠ Ya se había registrado asistencia para este discípulo en esta clase.");
+                            System.out.println("Ya se había registrado asistencia para este discípulo en esta clase.");
                         }
                     } catch (SQLException e) {
-                        System.out.println("❌ Error al registrar asistencia: " + e.getMessage());
+                        System.out.println("Error al registrar asistencia: " + e.getMessage());
                     }
                 }
             }
@@ -145,14 +145,14 @@ public class GestorAsistencia {
             if (aEliminar != null) {
                 asistenciaDAO.eliminarPorId(id);
                 asistencias.remove(aEliminar);
-                System.out.println("✔ Asistencia eliminada.");
+                System.out.println("Asistencia eliminada.");
             } else {
-                System.out.println("❌ No se encontró una asistencia con ese ID.");
+                System.out.println("No se encontró una asistencia con ese ID.");
             }
         } catch (NumberFormatException e) {
             System.out.println("ID inválido.");
         } catch (SQLException e) {
-            System.out.println("❌ Error al eliminar asistencia: " + e.getMessage());
+            System.out.println("Error al eliminar asistencia: " + e.getMessage());
         }
     }
 

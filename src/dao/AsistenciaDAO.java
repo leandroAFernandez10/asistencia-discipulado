@@ -17,11 +17,15 @@ public class AsistenciaDAO {
     }
 
     public void guardar(Asistencia asistencia) throws SQLException {
-        String sql = "INSERT INTO asistencia (id_matriculacion, id_clase, presente) VALUES (?, ?, ?)";
-        PreparedStatement stmt = conexion.prepareStatement(sql);
+        String sql = "INSERT INTO asistencia (id_matriculacion, id_clase) VALUES (?, ?)";
+        PreparedStatement stmt = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setInt(1, asistencia.getMatricula().getId());
         stmt.setInt(2, asistencia.getClase().getId());
         stmt.executeUpdate();
+        ResultSet rs = stmt.getGeneratedKeys();
+        if (rs.next()) {
+            asistencia.setId(rs.getInt(1));
+        }
     }
 
     public void eliminarPorId(int idAsistencia) throws SQLException {
