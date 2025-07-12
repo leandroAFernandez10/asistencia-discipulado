@@ -29,6 +29,9 @@ Facilitar la gestión de múltiples cursos y espacios prácticos dentro de una e
 Evaluar el compromiso y la participación de los discípulos tanto en la teoría como en la práctica.
 Garantizar que los requisitos de formación se cumplan de forma clara y medible.
 Detectar posibles falencias en la asistencia y generar alertas que permitan intervenir a tiempo.
-
+ 
 USO ESPERADO
 Este sistema está pensado para ejecutarse por consola y ser utilizado por una persona encargada de registrar y consultar la información. Las funcionalidades están organizadas por módulos, cada uno con sus respectivas opciones para facilitar su manejo.
+
+VIDEO PRESENTACIÓN
+https://drive.google.com/drive/folders/1weigmSulpnF7tgA7hK555UMeEP9DHTlL
